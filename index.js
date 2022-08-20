@@ -26,7 +26,7 @@ async function run() {
       res.send(result);
     })
 
-    // FInd Multiple Document
+    // Find Multiple Document
     app.get('/food', async (req, res) => {
       const query = {};
       const cursor = foodCollection.find(query);
@@ -34,12 +34,20 @@ async function run() {
       res.send(foods);
     });
 
-    //Find a document ...
+    // Find a document ...
     app.get('/food/:id',async(req,res)=>{
       const id = req.params.id;
       const query = {_id: ObjectId(id)};
       const food = await foodCollection.findOne(query);
       res.send(food);
+    })
+
+    // DELETE a user ...
+    app.delete('/food/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const result = await foodCollection.deleteOne(query);
+      res.send(result);
     })
 
 
