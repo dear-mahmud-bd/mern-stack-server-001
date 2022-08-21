@@ -26,11 +26,19 @@ async function run() {
       res.send(result);
     })
 
-    // Find Multiple Document ...
+    // Find Multiple Document (pagination)...
     app.get('/food', async (req, res) => {
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
       const query = {};
       const cursor = foodCollection.find(query);
-      const foods = await cursor.toArray()
+      let foods;
+      // Apply pagination ...
+      if (page || size) {
+        foods = await cursor.skip(page*size).limit(size).toArray();
+      } else {
+        foods = await cursor.toArray();
+      }
       res.send(foods);
     });
 
@@ -63,6 +71,15 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const result = await foodCollection.deleteOne(query);
       res.send(result);
+    })
+
+    // Using pagination ...
+    app.get('/foodCount', async (req, res) => {
+      const query = {};
+      const cursor = foodCollection.find(query);
+      // const count = await cursor.countDocuments();
+      const count = await cursor.count();
+      res.send({ count })
     })
 
 
