@@ -20,13 +20,13 @@ async function run() {
     const foodCollection = client.db("foodStock").collection("food");
 
     // Adding or Creating ...
-    app.post('/food',async(req,res)=>{
+    app.post('/food', async (req, res) => {
       const newItem = req.body;
       const result = await foodCollection.insertOne(newItem);
       res.send(result);
     })
 
-    // Find Multiple Document
+    // Find Multiple Document ...
     app.get('/food', async (req, res) => {
       const query = {};
       const cursor = foodCollection.find(query);
@@ -35,17 +35,32 @@ async function run() {
     });
 
     // Find a document ...
-    app.get('/food/:id',async(req,res)=>{
+    app.get('/food/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: ObjectId(id)};
+      const query = { _id: ObjectId(id) };
       const food = await foodCollection.findOne(query);
       res.send(food);
     })
 
-    // DELETE a user ...
-    app.delete('/food/:id',async(req,res)=>{
+    // UPDATE or PUT a document ...
+    app.put('/food/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: ObjectId(id)};
+      const updateItem = req.body;
+      const filter = { _id: ObjectId(id) };
+      const option = { upsert: true };
+      const updateDoc = {
+        $set: {
+          quantity: updateItem.quantity
+        }
+      };
+      const result = await foodCollection.updateOne(filter, updateDoc, option);
+      res.send(result);
+    })
+
+    // DELETE a item ...
+    app.delete('/food/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
       const result = await foodCollection.deleteOne(query);
       res.send(result);
     })
