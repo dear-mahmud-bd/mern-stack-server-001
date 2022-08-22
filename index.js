@@ -28,14 +28,20 @@ async function run() {
 
     // Find Multiple Document (pagination)...
     app.get('/food', async (req, res) => {
+      const {email} = req.query;
       const page = parseInt(req.query.page);
       const size = parseInt(req.query.size);
-      const query = {};
+      let query;
+      if (email) {
+        query = { email };
+      } else {
+        query = {};
+      }
       const cursor = foodCollection.find(query);
       let foods;
       // Apply pagination ...
       if (page || size) {
-        foods = await cursor.skip(page*size).limit(size).toArray();
+        foods = await cursor.skip(page * size).limit(size).toArray();
       } else {
         foods = await cursor.toArray();
       }
